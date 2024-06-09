@@ -20,7 +20,9 @@ RUN npx storybook build -o /app/storybook-static
 FROM nginx:alpine
 
 # Copy built Storybook static files
-COPY --from=builder /app/storybook-static /usr/share/nginx/html
+COPY --from=builder /app/storybook-static /usr/share/nginx/html/project/storybook
+
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose port 80 (the default NGINX port)
 EXPOSE 80
