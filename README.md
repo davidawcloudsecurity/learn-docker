@@ -1,4 +1,4 @@
-## How to run storybook in a docker
+## How to run storybook in a docker with redirect
 
 ```ruby
 docker build -t my-nextjs-app .
