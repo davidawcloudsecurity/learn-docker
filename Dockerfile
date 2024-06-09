@@ -1,23 +1,26 @@
-# Use the official Node.js image as a base
-FROM node:18-alpine
+# Use a Node.js base image
+FROM node:18-alpine as builder
 
-# Set the working directory inside the container
-WORKDIR /usr/src/app
+# Set the working directory
+WORKDIR /app
 
-# Copy package.json and package-lock.json to the working directory
+# Copy package.json and package-lock.json
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the application code to the working directory
+# Copy the rest of the application code
 COPY . .
 
-# Build the Next.js application
-RUN npm run build
+# Build Storybook
+RUN npx storybook build -o /app/storybook-static
 
-# Expose port 3000 (the default Next.js port)
-EXPOSE 3000
+# Use NGINX to serve Storybook
+FROM nginx:alpine
 
-# Start the Next.js server
-CMD ["npm", "start"]
+# Copy built Storybook static files
+COPY --from=builder /app/storybook-static /usr/share/nginx/html
+
+# Expose port 80 (the default NGINX port)
+EXPOSE 80
